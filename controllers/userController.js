@@ -2,7 +2,7 @@ const User = require("../models/userModel.js");
 const bcrypt = require("bcrypt");
 
 module.exports.register = async (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
   try {
     const { username, email, password } = req.body;
     const usernameCheck = await User.findOne({ username });
@@ -58,14 +58,15 @@ module.exports.setAvatar = async (req, res, next) => {
   try {
     const userId = req.params.id.slice(0, -1).toString();
     const avatarImage = req.body.image;
-    const userData = await User.findByIdAndUpdate(userId, {
+    await User.findByIdAndUpdate(userId, {
       isAvatarSet: true,
       avatar: avatarImage,
-    });
-    return res.json({
-      isSet: userData.isAvatarSet,
-      image: userData.avatarImage,
-    });
+    }).then((userData)=>{
+      return res.json({
+        isSet: true,
+        image: avatarImage,
+      })
+    })
   } catch (error) {
     console.log(error);
     next(error);
